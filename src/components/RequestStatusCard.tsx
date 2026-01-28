@@ -58,87 +58,87 @@ export const RequestStatusCard = ({
   const StatusIcon = config.icon;
 
   return (
-    <div className="bg-card rounded-2xl border border-border shadow-lg overflow-hidden">
+    <div className="bg-card rounded-xl sm:rounded-2xl border border-border shadow-lg overflow-hidden">
       {/* Status Header */}
-      <div className={cn('p-4 border-b', config.color)}>
-        <div className="flex items-center gap-3">
-          <div className={cn('w-10 h-10 rounded-full flex items-center justify-center', config.color)}>
-            <StatusIcon className={cn('w-5 h-5', config.animate && 'animate-spin')} />
+      <div className={cn('p-3 sm:p-4 border-b', config.color)}>
+        <div className="flex items-center gap-2.5 sm:gap-3">
+          <div className={cn('w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center', config.color)}>
+            <StatusIcon className={cn('w-4 h-4 sm:w-5 sm:h-5', config.animate && 'animate-spin')} />
           </div>
           <div>
-            <h3 className="font-semibold">{config.label}</h3>
-            <p className="text-sm opacity-80">{config.description}</p>
+            <h3 className="font-semibold text-sm sm:text-base">{config.label}</h3>
+            <p className="text-xs sm:text-sm opacity-80">{config.description}</p>
           </div>
         </div>
       </div>
 
       {/* Details */}
-      <div className="p-5 space-y-4">
+      <div className="p-4 sm:p-5 space-y-3 sm:space-y-4">
         {technicianName && (
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center">
-              <span className="text-lg font-semibold text-primary">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-secondary flex items-center justify-center flex-shrink-0">
+              <span className="text-base sm:text-lg font-semibold text-primary">
                 {technicianName.charAt(0)}
               </span>
             </div>
-            <div className="flex-1">
-              <p className="font-medium text-foreground">{technicianName}</p>
-              <p className="text-sm text-muted-foreground">Your Technician</p>
+            <div className="flex-1 min-w-0">
+              <p className="font-medium text-foreground text-sm sm:text-base truncate">{technicianName}</p>
+              <p className="text-xs sm:text-sm text-muted-foreground">Your Technician</p>
             </div>
-            <Button variant="outline" size="icon" className="rounded-full">
+            <Button variant="outline" size="icon" className="rounded-full w-9 h-9 sm:w-10 sm:h-10 flex-shrink-0">
               <Phone className="w-4 h-4" />
             </Button>
           </div>
         )}
 
         {estimatedArrival && status !== 'completed' && (
-          <div className="flex items-center gap-3 p-3 bg-secondary/50 rounded-xl">
-            <Clock className="w-5 h-5 text-primary" />
+          <div className="flex items-center gap-2.5 sm:gap-3 p-2.5 sm:p-3 bg-secondary/50 rounded-lg sm:rounded-xl">
+            <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
             <div>
-              <p className="text-sm text-muted-foreground">Estimated Arrival</p>
-              <p className="font-semibold text-foreground">{estimatedArrival}</p>
+              <p className="text-xs sm:text-sm text-muted-foreground">Estimated Arrival</p>
+              <p className="font-semibold text-foreground text-sm sm:text-base">{estimatedArrival}</p>
             </div>
           </div>
         )}
 
         {address && (
-          <div className="flex items-start gap-3 p-3 bg-secondary/50 rounded-xl">
-            <MapPin className="w-5 h-5 text-primary mt-0.5" />
-            <div>
-              <p className="text-sm text-muted-foreground">Location</p>
-              <p className="font-medium text-foreground">{address}</p>
+          <div className="flex items-start gap-2.5 sm:gap-3 p-2.5 sm:p-3 bg-secondary/50 rounded-lg sm:rounded-xl">
+            <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-primary mt-0.5 flex-shrink-0" />
+            <div className="min-w-0">
+              <p className="text-xs sm:text-sm text-muted-foreground">Location</p>
+              <p className="font-medium text-foreground text-sm sm:text-base break-words">{address}</p>
             </div>
           </div>
         )}
 
         {/* Map Placeholder */}
-        <div className="h-40 bg-muted rounded-xl flex items-center justify-center border border-border overflow-hidden relative">
+        <div className="h-32 sm:h-40 bg-muted rounded-lg sm:rounded-xl flex items-center justify-center border border-border overflow-hidden relative">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5" />
           <div className="text-center z-10">
-            <MapPin className="w-8 h-8 text-primary mx-auto mb-2" />
-            <p className="text-sm text-muted-foreground">Live tracking map</p>
+            <MapPin className="w-6 h-6 sm:w-8 sm:h-8 text-primary mx-auto mb-1.5 sm:mb-2" />
+            <p className="text-xs sm:text-sm text-muted-foreground">Live tracking map</p>
           </div>
         </div>
 
         {/* Actions */}
-        <div className="flex gap-3">
+        <div className="flex gap-2 sm:gap-3">
           {onNavigate && status === 'accepted' && (
-            <Button onClick={onNavigate} className="flex-1 gradient-primary text-primary-foreground">
-              <Navigation className="w-4 h-4 mr-2" />
+            <Button onClick={onNavigate} className="flex-1 gradient-primary text-primary-foreground text-sm sm:text-base py-2.5 sm:py-3">
+              <Navigation className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
               Navigate
             </Button>
           )}
           
           {onComplete && status === 'in_progress' && isTechnician && (
-            <Button onClick={onComplete} className="flex-1 bg-success text-success-foreground hover:bg-success/90">
-              <CheckCircle2 className="w-4 h-4 mr-2" />
-              Mark Complete
+            <Button onClick={onComplete} className="flex-1 bg-success text-success-foreground hover:bg-success/90 text-sm sm:text-base py-2.5 sm:py-3">
+              <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
+              Complete
             </Button>
           )}
           
           {onCancel && status === 'pending' && (
-            <Button variant="outline" onClick={onCancel} className="flex-1">
-              Cancel Request
+            <Button variant="outline" onClick={onCancel} className="flex-1 text-sm sm:text-base py-2.5 sm:py-3">
+              Cancel
             </Button>
           )}
         </div>
