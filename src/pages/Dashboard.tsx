@@ -159,13 +159,13 @@ export default function Dashboard() {
     <div className="min-h-screen bg-background">
       <Header />
       
-      <main className="container mx-auto px-4 py-6 max-w-2xl">
+      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 max-w-2xl">
         {/* Welcome Section */}
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-foreground mb-1">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground mb-1">
             Hello, {profile?.full_name?.split(' ')[0] || 'there'}! 👋
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-sm sm:text-base text-muted-foreground">
             {profile?.user_type === 'technician' 
               ? 'Check for new service requests nearby'
               : 'Need a repair? Book a technician now'}
@@ -174,23 +174,23 @@ export default function Dashboard() {
 
         {/* Quick Actions */}
         {profile?.user_type === 'client' && (
-          <div className="mb-8">
+          <div className="mb-6 sm:mb-8">
             <Button
               onClick={() => navigate('/request')}
-              className="w-full py-6 text-lg gradient-accent text-accent-foreground shadow-accent-glow"
+              className="w-full py-5 sm:py-6 text-base sm:text-lg gradient-accent text-accent-foreground shadow-accent-glow"
             >
-              <Plus className="w-5 h-5 mr-2" />
+              <Plus className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
               New Service Request
             </Button>
           </div>
         )}
 
         {/* Active Requests */}
-        <section className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-foreground">Active Requests</h2>
-            <Button variant="ghost" size="sm" onClick={() => navigate('/history')}>
-              <History className="w-4 h-4 mr-1" />
+        <section className="mb-6 sm:mb-8">
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
+            <h2 className="text-base sm:text-lg font-semibold text-foreground">Active Requests</h2>
+            <Button variant="ghost" size="sm" onClick={() => navigate('/history')} className="text-xs sm:text-sm">
+              <History className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1" />
               History
             </Button>
           </div>
@@ -200,7 +200,7 @@ export default function Dashboard() {
               <div className="animate-spin w-6 h-6 border-2 border-primary border-t-transparent rounded-full" />
             </div>
           ) : activeRequests.length > 0 ? (
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {activeRequests.map((request) => (
                 <RequestStatusCard
                   key={request.id}
@@ -214,19 +214,19 @@ export default function Dashboard() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-12 bg-card rounded-2xl border border-border">
-              <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mx-auto mb-4">
-                <Bell className="w-8 h-8 text-muted-foreground" />
+            <div className="text-center py-8 sm:py-12 bg-card rounded-xl sm:rounded-2xl border border-border">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-secondary flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                <Bell className="w-6 h-6 sm:w-8 sm:h-8 text-muted-foreground" />
               </div>
-              <h3 className="font-medium text-foreground mb-1">No Active Requests</h3>
-              <p className="text-sm text-muted-foreground mb-4">
+              <h3 className="font-medium text-foreground mb-1 text-sm sm:text-base">No Active Requests</h3>
+              <p className="text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4 px-4">
                 {profile?.user_type === 'technician'
                   ? 'New requests will appear here'
                   : 'Create a new request to get started'}
               </p>
               {profile?.user_type === 'client' && (
-                <Button onClick={() => navigate('/request')} className="gradient-primary text-primary-foreground">
-                  <Plus className="w-4 h-4 mr-2" />
+                <Button onClick={() => navigate('/request')} className="gradient-primary text-primary-foreground text-sm">
+                  <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-2" />
                   New Request
                 </Button>
               )}
@@ -236,29 +236,29 @@ export default function Dashboard() {
 
         {/* Quick Services for Clients */}
         {profile?.user_type === 'client' && (
-          <section>
-            <h2 className="text-lg font-semibold text-foreground mb-4">Quick Services</h2>
-            <div className="grid grid-cols-3 gap-3">
+          <section className="pb-4 sm:pb-0">
+            <h2 className="text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4">Quick Services</h2>
+            <div className="grid grid-cols-3 gap-2 sm:gap-3">
               {(['electrical', 'mechanical', 'plumbing'] as const).map((service) => {
                 const Icon = serviceIcons[service];
                 return (
                   <button
                     key={service}
                     onClick={() => navigate(`/request?service=${service}`)}
-                    className="p-4 rounded-xl bg-card border border-border hover:border-primary/50 transition-all text-center group"
+                    className="p-3 sm:p-4 rounded-lg sm:rounded-xl bg-card border border-border hover:border-primary/50 transition-all text-center group touch-target"
                   >
-                    <div className={`w-12 h-12 rounded-xl mx-auto mb-2 flex items-center justify-center transition-transform group-hover:scale-110 ${
+                    <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl mx-auto mb-1.5 sm:mb-2 flex items-center justify-center transition-transform group-hover:scale-110 ${
                       service === 'electrical' ? 'bg-electrical/10' :
                       service === 'mechanical' ? 'bg-mechanical/10' :
                       'bg-plumbing/10'
                     }`}>
-                      <Icon className={`w-6 h-6 ${
+                      <Icon className={`w-5 h-5 sm:w-6 sm:h-6 ${
                         service === 'electrical' ? 'text-electrical' :
                         service === 'mechanical' ? 'text-mechanical' :
                         'text-plumbing'
                       }`} />
                     </div>
-                    <span className="text-sm font-medium text-foreground capitalize">{service}</span>
+                    <span className="text-xs sm:text-sm font-medium text-foreground capitalize">{service}</span>
                   </button>
                 );
               })}

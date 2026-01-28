@@ -82,26 +82,26 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen gradient-hero flex flex-col">
+    <div className="min-h-screen gradient-hero flex flex-col safe-top">
       {/* Header */}
-      <header className="p-4">
-        <button onClick={() => navigate('/')} className="flex items-center gap-2">
-          <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center shadow-glow">
-            <Wrench className="w-5 h-5 text-primary-foreground" />
+      <header className="p-3 sm:p-4">
+        <button onClick={() => navigate('/')} className="flex items-center gap-1.5 sm:gap-2">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl gradient-primary flex items-center justify-center shadow-glow">
+            <Wrench className="w-4 h-4 sm:w-5 sm:h-5 text-primary-foreground" />
           </div>
-          <span className="text-xl font-bold text-foreground">FixIt<span className="text-primary">Pro</span></span>
+          <span className="text-lg sm:text-xl font-bold text-foreground">FixIt<span className="text-primary">Pro</span></span>
         </button>
       </header>
 
       {/* Auth Form */}
-      <main className="flex-1 flex items-center justify-center p-4">
+      <main className="flex-1 flex items-center justify-center p-4 sm:p-6">
         <div className="w-full max-w-md">
-          <div className="bg-card rounded-2xl shadow-xl border border-border p-8 animate-scale-in">
-            <div className="text-center mb-8">
-              <h1 className="text-2xl font-bold text-foreground mb-2">
+          <div className="bg-card rounded-xl sm:rounded-2xl shadow-xl border border-border p-5 sm:p-6 md:p-8 animate-scale-in">
+            <div className="text-center mb-5 sm:mb-6 md:mb-8">
+              <h1 className="text-xl sm:text-2xl font-bold text-foreground mb-1.5 sm:mb-2">
                 {isLogin ? 'Welcome Back' : 'Create Account'}
               </h1>
-              <p className="text-muted-foreground">
+              <p className="text-sm sm:text-base text-muted-foreground">
                 {isLogin
                   ? 'Sign in to continue to FixIt Pro'
                   : 'Join FixIt Pro today'}
@@ -109,57 +109,57 @@ export default function Auth() {
             </div>
 
             {error && (
-              <div className="mb-6 p-3 bg-destructive/10 border border-destructive/20 rounded-lg flex items-start gap-2">
-                <AlertCircle className="w-5 h-5 text-destructive shrink-0 mt-0.5" />
-                <p className="text-sm text-destructive">{error}</p>
+              <div className="mb-4 sm:mb-6 p-2.5 sm:p-3 bg-destructive/10 border border-destructive/20 rounded-lg flex items-start gap-2">
+                <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-destructive shrink-0 mt-0.5" />
+                <p className="text-xs sm:text-sm text-destructive">{error}</p>
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
               {!isLogin && (
                 <>
                   <div>
-                    <Label htmlFor="fullName">Full Name</Label>
+                    <Label htmlFor="fullName" className="text-xs sm:text-sm">Full Name</Label>
                     <div className="relative mt-1">
-                      <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                      <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
                       <Input
                         id="fullName"
                         type="text"
                         placeholder="John Doe"
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
-                        className="pl-10"
+                        className="pl-9 sm:pl-10 h-10 sm:h-11 text-sm sm:text-base"
                         required
                       />
                     </div>
                   </div>
 
                   <div>
-                    <Label>I am a</Label>
-                    <div className="grid grid-cols-2 gap-3 mt-1">
+                    <Label className="text-xs sm:text-sm">I am a</Label>
+                    <div className="grid grid-cols-2 gap-2 sm:gap-3 mt-1">
                       <button
                         type="button"
                         onClick={() => setUserType('client')}
-                        className={`p-3 rounded-xl border-2 text-center transition-all ${
+                        className={`p-2.5 sm:p-3 rounded-lg sm:rounded-xl border-2 text-center transition-all touch-target ${
                           userType === 'client'
                             ? 'border-primary bg-primary/5 text-primary'
                             : 'border-border hover:border-primary/50'
                         }`}
                       >
-                        <span className="block text-2xl mb-1">🏠</span>
-                        <span className="text-sm font-medium">Client</span>
+                        <span className="block text-xl sm:text-2xl mb-0.5 sm:mb-1">🏠</span>
+                        <span className="text-xs sm:text-sm font-medium">Client</span>
                       </button>
                       <button
                         type="button"
                         onClick={() => setUserType('technician')}
-                        className={`p-3 rounded-xl border-2 text-center transition-all ${
+                        className={`p-2.5 sm:p-3 rounded-lg sm:rounded-xl border-2 text-center transition-all touch-target ${
                           userType === 'technician'
                             ? 'border-primary bg-primary/5 text-primary'
                             : 'border-border hover:border-primary/50'
                         }`}
                       >
-                        <span className="block text-2xl mb-1">🔧</span>
-                        <span className="text-sm font-medium">Technician</span>
+                        <span className="block text-xl sm:text-2xl mb-0.5 sm:mb-1">🔧</span>
+                        <span className="text-xs sm:text-sm font-medium">Technician</span>
                       </button>
                     </div>
                   </div>
@@ -167,32 +167,32 @@ export default function Auth() {
               )}
 
               <div>
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email" className="text-xs sm:text-sm">Email</Label>
                 <div className="relative mt-1">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
                   <Input
                     id="email"
                     type="email"
                     placeholder="you@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10"
+                    className="pl-9 sm:pl-10 h-10 sm:h-11 text-sm sm:text-base"
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password" className="text-xs sm:text-sm">Password</Label>
                 <div className="relative mt-1">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
                   <Input
                     id="password"
                     type="password"
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pl-10"
+                    className="pl-9 sm:pl-10 h-10 sm:h-11 text-sm sm:text-base"
                     minLength={6}
                     required
                   />
@@ -201,7 +201,7 @@ export default function Auth() {
 
               <Button
                 type="submit"
-                className="w-full gradient-primary text-primary-foreground shadow-glow mt-6"
+                className="w-full gradient-primary text-primary-foreground shadow-glow mt-4 sm:mt-6 h-10 sm:h-11 text-sm sm:text-base"
                 disabled={loading}
               >
                 {loading ? (
@@ -215,8 +215,8 @@ export default function Auth() {
               </Button>
             </form>
 
-            <div className="mt-6 text-center">
-              <p className="text-sm text-muted-foreground">
+            <div className="mt-4 sm:mt-6 text-center">
+              <p className="text-xs sm:text-sm text-muted-foreground">
                 {isLogin ? "Don't have an account?" : 'Already have an account?'}
                 <button
                   type="button"

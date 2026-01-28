@@ -163,25 +163,25 @@ export default function ServiceRequest() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
-        <div className="container mx-auto px-4 h-16 flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => step > 1 ? setStep(step - 1) : navigate('/dashboard')}>
-            <ArrowLeft className="w-5 h-5" />
+      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border safe-top">
+        <div className="container mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center gap-3 sm:gap-4">
+          <Button variant="ghost" size="icon" onClick={() => step > 1 ? setStep(step - 1) : navigate('/dashboard')} className="w-9 h-9 sm:w-10 sm:h-10">
+            <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
           </Button>
           <div>
-            <h1 className="font-semibold text-foreground">New Request</h1>
+            <h1 className="font-semibold text-foreground text-sm sm:text-base">New Request</h1>
             <p className="text-xs text-muted-foreground">Step {step} of 2</p>
           </div>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-6 max-w-2xl">
+      <main className="container mx-auto px-4 sm:px-6 py-4 sm:py-6 max-w-2xl">
         {step === 1 && (
-          <div className="space-y-6 animate-fade-in">
+          <div className="space-y-5 sm:space-y-6 animate-fade-in">
             {/* Service Selection */}
             <section>
-              <h2 className="text-lg font-semibold text-foreground mb-4">Select Service Type</h2>
-              <div className="grid gap-3">
+              <h2 className="text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4">Select Service Type</h2>
+              <div className="grid gap-2.5 sm:gap-3">
                 {(['electrical', 'mechanical', 'plumbing'] as const).map((service) => (
                   <ServiceCard
                     key={service}
@@ -195,18 +195,18 @@ export default function ServiceRequest() {
 
             {/* Location */}
             <section>
-              <h2 className="text-lg font-semibold text-foreground mb-4">Your Location</h2>
-              <div className="space-y-3">
+              <h2 className="text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4">Your Location</h2>
+              <div className="space-y-2.5 sm:space-y-3">
                 <div className="relative">
-                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
                   <Input
                     placeholder="Enter your address"
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
-                    className="pl-10"
+                    className="pl-9 sm:pl-10 text-sm sm:text-base h-11 sm:h-12"
                   />
                 </div>
-                <Button variant="outline" className="w-full" onClick={() => setAddress('123 Main Street, City')}>
+                <Button variant="outline" className="w-full h-11 sm:h-12 text-sm sm:text-base" onClick={() => setAddress('123 Main Street, City')}>
                   <MapPin className="w-4 h-4 mr-2 text-primary" />
                   Use Current Location
                 </Button>
@@ -215,16 +215,16 @@ export default function ServiceRequest() {
 
             {/* Description */}
             <section>
-              <Label className="text-lg font-semibold text-foreground mb-4 block">
+              <Label className="text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4 block">
                 Describe the Issue (Optional)
               </Label>
               <div className="relative">
-                <FileText className="absolute left-3 top-3 w-5 h-5 text-muted-foreground" />
+                <FileText className="absolute left-3 top-3 w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
                 <Textarea
                   placeholder="E.g., Leaking faucet in the kitchen..."
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="pl-10 min-h-[100px]"
+                  className="pl-9 sm:pl-10 min-h-[80px] sm:min-h-[100px] text-sm sm:text-base"
                 />
               </div>
             </section>
@@ -233,16 +233,16 @@ export default function ServiceRequest() {
             <Button
               onClick={handleFindTechnicians}
               disabled={!selectedService || !address || loading}
-              className="w-full py-6 text-lg gradient-accent text-accent-foreground shadow-accent-glow"
+              className="w-full py-5 sm:py-6 text-base sm:text-lg gradient-accent text-accent-foreground shadow-accent-glow"
             >
               {loading ? (
                 <>
-                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                  <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 mr-2 animate-spin" />
                   Finding Technicians...
                 </>
               ) : (
                 <>
-                  <Search className="w-5 h-5 mr-2" />
+                  <Search className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                   Find Nearby Technicians
                 </>
               )}
@@ -251,17 +251,17 @@ export default function ServiceRequest() {
         )}
 
         {step === 2 && (
-          <div className="space-y-6 animate-fade-in">
-            <div className="text-center mb-6">
-              <h2 className="text-lg font-semibold text-foreground">
+          <div className="space-y-4 sm:space-y-6 animate-fade-in">
+            <div className="text-center mb-4 sm:mb-6">
+              <h2 className="text-base sm:text-lg font-semibold text-foreground">
                 {technicians.length} Technicians Found
               </h2>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-xs sm:text-sm text-muted-foreground">
                 Select a technician to proceed with payment
               </p>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {technicians.map((tech) => (
                 <TechnicianCard
                   key={tech.id}
