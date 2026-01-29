@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Wrench, Mail, Lock, User, AlertCircle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,11 +8,16 @@ import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/hooks/use-toast';
 
 export default function Auth() {
-  const [isLogin, setIsLogin] = useState(true);
+  const [searchParams] = useSearchParams();
+  const roleFromUrl = searchParams.get('role');
+  
+  const [isLogin, setIsLogin] = useState(roleFromUrl ? false : true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
-  const [userType, setUserType] = useState<'client' | 'technician'>('client');
+  const [userType, setUserType] = useState<'client' | 'technician'>(
+    roleFromUrl === 'technician' ? 'technician' : 'client'
+  );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   
@@ -24,6 +29,17 @@ export default function Auth() {
       navigate('/dashboard');
     }
   }, [user, navigate]);
+  
+  // Update userType when URL param changes
+  useEffect(() => {
+    if (roleFromUrl === 'technician') {
+      setUserType('technician');
+      setIsLogin(false);
+    } else if (roleFromUrl === 'client') {
+      setUserType('client');
+      setIsLogin(false);
+    }
+  }, [roleFromUrl]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
