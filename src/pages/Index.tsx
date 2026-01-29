@@ -2,50 +2,9 @@ import { useNavigate } from 'react-router-dom';
 import { Zap, Wrench, Droplets, Shield, Clock, Star, MapPin, ChevronRight, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Header } from '@/components/Header';
-import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
-import { useEffect, useState } from 'react';
 
 export default function Index() {
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const [userType, setUserType] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchUserType = async () => {
-      if (user) {
-        const { data } = await supabase
-          .from('profiles')
-          .select('user_type')
-          .eq('user_id', user.id)
-          .maybeSingle();
-        if (data) {
-          setUserType(data.user_type);
-        }
-      }
-    };
-    fetchUserType();
-  }, [user]);
-
-  const handleBookService = () => {
-    if (user && userType === 'client') {
-      navigate('/request');
-    } else if (user && userType === 'technician') {
-      navigate('/dashboard');
-    } else {
-      navigate('/auth?role=client');
-    }
-  };
-
-  const handleJoinAsTechnician = () => {
-    if (user && userType === 'technician') {
-      navigate('/dashboard');
-    } else if (user && userType === 'client') {
-      navigate('/dashboard');
-    } else {
-      navigate('/auth?role=technician');
-    }
-  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -79,18 +38,18 @@ export default function Index() {
               <Button 
                 size="lg" 
                 className="gradient-accent text-accent-foreground shadow-accent-glow text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 w-full sm:w-auto"
-                onClick={handleBookService}
+                onClick={() => navigate('/auth?role=client')}
               >
-                {user && userType === 'client' ? 'Book a Service' : user && userType === 'technician' ? 'Go to Dashboard' : 'Book a Service'}
+                Book a Service
                 <ChevronRight className="w-5 h-5 ml-2" />
               </Button>
               <Button 
                 size="lg" 
                 variant="outline"
                 className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 w-full sm:w-auto"
-                onClick={handleJoinAsTechnician}
+                onClick={() => navigate('/auth?role=technician')}
               >
-                {user ? 'Go to Dashboard' : 'Join as Technician'}
+                Join as Technician
               </Button>
             </div>
 
@@ -244,17 +203,17 @@ export default function Index() {
               <Button 
                 size="lg" 
                 className="bg-white text-primary hover:bg-white/90 text-base sm:text-lg px-6 sm:px-8 w-full sm:w-auto"
-                onClick={handleBookService}
+                onClick={() => navigate('/auth?role=client')}
               >
-                {user ? 'Go to Dashboard' : 'Get Started Now'}
+                Get Started Now
               </Button>
               <Button 
                 size="lg" 
                 variant="outline"
                 className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 text-base sm:text-lg px-6 sm:px-8 w-full sm:w-auto"
-                onClick={handleJoinAsTechnician}
+                onClick={() => navigate('/auth?role=technician')}
               >
-                {user ? 'View Dashboard' : 'Become a Technician'}
+                Become a Technician
               </Button>
             </div>
           </div>
