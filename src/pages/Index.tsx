@@ -38,7 +38,7 @@ export default function Index() {
               <Button 
                 size="lg" 
                 className="gradient-accent text-accent-foreground shadow-accent-glow text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 w-full sm:w-auto"
-                onClick={() => navigate('/auth?role=client')}
+                onClick={() => navigate('/book')}
               >
                 Book a Service
                 <ChevronRight className="w-5 h-5 ml-2" />
@@ -203,7 +203,7 @@ export default function Index() {
               <Button 
                 size="lg" 
                 className="bg-white text-primary hover:bg-white/90 text-base sm:text-lg px-6 sm:px-8 w-full sm:w-auto"
-                onClick={() => navigate('/auth?role=client')}
+                onClick={() => navigate('/book')}
               >
                 Get Started Now
               </Button>

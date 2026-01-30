@@ -26,9 +26,14 @@ export default function Auth() {
 
   useEffect(() => {
     if (user) {
-      navigate('/dashboard');
+      // Redirect based on intended role from URL or default to dashboard
+      if (roleFromUrl === 'client') {
+        navigate('/book');
+      } else {
+        navigate('/dashboard');
+      }
     }
-  }, [user, navigate]);
+  }, [user, navigate, roleFromUrl]);
   
   // Update userType when URL param changes
   useEffect(() => {
@@ -61,7 +66,8 @@ export default function Auth() {
             title: "Welcome back!",
             description: "You've successfully signed in.",
           });
-          navigate('/dashboard');
+          // Navigate based on role from URL or default to dashboard
+          navigate(roleFromUrl === 'client' ? '/book' : '/dashboard');
         }
       } else {
         if (!fullName.trim()) {
@@ -87,7 +93,8 @@ export default function Auth() {
             title: "Account created!",
             description: "Welcome to FixIt Pro.",
           });
-          navigate('/dashboard');
+          // Navigate based on user type
+          navigate(userType === 'client' ? '/book' : '/dashboard');
         }
       }
     } catch (err) {
