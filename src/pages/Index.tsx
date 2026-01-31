@@ -38,9 +38,9 @@ export default function Index() {
               <Button 
                 size="lg" 
                 className="gradient-accent text-accent-foreground shadow-accent-glow text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 w-full sm:w-auto"
-                onClick={() => navigate('/book')}
+                onClick={() => navigate('/auth?role=client')}
               >
-                Book a Service
+                I Need a Service
                 <ChevronRight className="w-5 h-5 ml-2" />
               </Button>
               <Button 
@@ -49,7 +49,7 @@ export default function Index() {
                 className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 w-full sm:w-auto"
                 onClick={() => navigate('/auth?role=technician')}
               >
-                Join as Technician
+                I'm a Technician
               </Button>
             </div>
 
@@ -203,9 +203,9 @@ export default function Index() {
               <Button 
                 size="lg" 
                 className="bg-white text-primary hover:bg-white/90 text-base sm:text-lg px-6 sm:px-8 w-full sm:w-auto"
-                onClick={() => navigate('/book')}
+                onClick={() => navigate('/auth?role=client')}
               >
-                Get Started Now
+                I Need a Service
               </Button>
               <Button 
                 size="lg" 
@@ -213,7 +213,7 @@ export default function Index() {
                 className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 text-base sm:text-lg px-6 sm:px-8 w-full sm:w-auto"
                 onClick={() => navigate('/auth?role=technician')}
               >
-                Become a Technician
+                I'm a Technician
               </Button>
             </div>
           </div>
