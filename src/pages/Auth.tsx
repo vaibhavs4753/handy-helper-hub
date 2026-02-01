@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Wrench, Mail, Lock, User, AlertCircle, Loader2 } from 'lucide-react';
+import { Wrench, Mail, Lock, User, AlertCircle, Loader2, CheckCircle2, MailCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/hooks/use-toast';
+import { signInSchema, signUpSchema } from '@/lib/validations';
 
 export default function Auth() {
   const [searchParams] = useSearchParams();
@@ -20,6 +21,8 @@ export default function Auth() {
   );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [showVerification, setShowVerification] = useState(false);
   
   const { user, signIn, signUp } = useAuth();
   const navigate = useNavigate();
@@ -48,16 +51,53 @@ export default function Auth() {
     }
   }, [roleFromUrl]);
 
+  const validateForm = () => {
+    setFieldErrors({});
+    
+    try {
+      if (isLogin) {
+        signInSchema.parse({ email, password });
+      } else {
+        signUpSchema.parse({ email, password, fullName, userType });
+      }
+      return true;
+    } catch (err: any) {
+      if (err.errors) {
+        const errors: Record<string, string> = {};
+        err.errors.forEach((e: any) => {
+          const field = e.path[0];
+          if (!errors[field]) {
+            errors[field] = e.message;
+          }
+        });
+        setFieldErrors(errors);
+      }
+      return false;
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setFieldErrors({});
+
+    if (!validateForm()) {
+      return;
+    }
+
     setLoading(true);
 
     try {
       if (isLogin) {
         const { error } = await signIn(email, password);
         if (error) {
-          setError(error.message);
+          if (error.message.includes('Email not confirmed')) {
+            setError('Please verify your email before signing in. Check your inbox for the verification link.');
+          } else if (error.message.includes('Invalid login credentials')) {
+            setError('Invalid email or password. Please try again.');
+          } else {
+            setError(error.message);
+          }
           toast({
             title: "Sign in failed",
             description: error.message,
@@ -78,12 +118,6 @@ export default function Auth() {
           }
         }
       } else {
-        if (!fullName.trim()) {
-          setError('Please enter your full name');
-          setLoading(false);
-          return;
-        }
-        
         const { error } = await signUp(email, password, fullName, userType);
         if (error) {
           if (error.message.includes('already registered')) {
@@ -97,12 +131,12 @@ export default function Auth() {
             variant: "destructive",
           });
         } else {
+          // Show verification message
+          setShowVerification(true);
           toast({
-            title: "Account created!",
-            description: "Welcome to FixIt Pro.",
+            title: "Check your email!",
+            description: "We've sent you a verification link.",
           });
-          // Navigate based on user type
-          navigate(userType === 'client' ? '/client' : '/technician');
         }
       }
     } catch (err) {
@@ -111,6 +145,79 @@ export default function Auth() {
       setLoading(false);
     }
   };
+
+  // Email verification success screen
+  if (showVerification) {
+    return (
+      <div className="min-h-screen gradient-hero flex flex-col safe-top">
+        {/* Header */}
+        <header className="p-3 sm:p-4">
+          <button onClick={() => navigate('/')} className="flex items-center gap-1.5 sm:gap-2">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl gradient-primary flex items-center justify-center shadow-glow">
+              <Wrench className="w-4 h-4 sm:w-5 sm:h-5 text-primary-foreground" />
+            </div>
+            <span className="text-lg sm:text-xl font-bold text-foreground">FixIt<span className="text-primary">Pro</span></span>
+          </button>
+        </header>
+
+        <main className="flex-1 flex items-center justify-center p-4 sm:p-6">
+          <div className="w-full max-w-md">
+            <div className="bg-card rounded-xl sm:rounded-2xl shadow-xl border border-border p-5 sm:p-6 md:p-8 animate-scale-in text-center">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-success/10 flex items-center justify-center mx-auto mb-4 sm:mb-6">
+                <MailCheck className="w-8 h-8 sm:w-10 sm:h-10 text-success" />
+              </div>
+              
+              <h1 className="text-xl sm:text-2xl font-bold text-foreground mb-2">
+                Check Your Email
+              </h1>
+              
+              <p className="text-sm sm:text-base text-muted-foreground mb-4">
+                We've sent a verification link to
+              </p>
+              
+              <p className="text-primary font-medium mb-6 break-all">
+                {email}
+              </p>
+              
+              <div className="bg-muted/50 rounded-lg p-4 mb-6 text-left">
+                <h3 className="font-medium text-foreground mb-2 text-sm">Next steps:</h3>
+                <ol className="text-sm text-muted-foreground space-y-2">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-success mt-0.5 flex-shrink-0" />
+                    <span>Open your email inbox</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-success mt-0.5 flex-shrink-0" />
+                    <span>Click the verification link</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-success mt-0.5 flex-shrink-0" />
+                    <span>Return here to sign in</span>
+                  </li>
+                </ol>
+              </div>
+              
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => {
+                  setShowVerification(false);
+                  setIsLogin(true);
+                  setPassword('');
+                }}
+              >
+                Back to Sign In
+              </Button>
+              
+              <p className="text-xs text-muted-foreground mt-4">
+                Didn't receive the email? Check your spam folder or try signing up again.
+              </p>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen gradient-hero flex flex-col safe-top">
@@ -159,10 +266,12 @@ export default function Auth() {
                         placeholder="John Doe"
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
-                        className="pl-9 sm:pl-10 h-10 sm:h-11 text-sm sm:text-base"
-                        required
+                        className={`pl-9 sm:pl-10 h-10 sm:h-11 text-sm sm:text-base ${fieldErrors.fullName ? 'border-destructive' : ''}`}
                       />
                     </div>
+                    {fieldErrors.fullName && (
+                      <p className="text-xs text-destructive mt-1">{fieldErrors.fullName}</p>
+                    )}
                   </div>
 
                   <div>
@@ -207,10 +316,12 @@ export default function Auth() {
                     placeholder="you@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="pl-9 sm:pl-10 h-10 sm:h-11 text-sm sm:text-base"
-                    required
+                    className={`pl-9 sm:pl-10 h-10 sm:h-11 text-sm sm:text-base ${fieldErrors.email ? 'border-destructive' : ''}`}
                   />
                 </div>
+                {fieldErrors.email && (
+                  <p className="text-xs text-destructive mt-1">{fieldErrors.email}</p>
+                )}
               </div>
 
               <div>
@@ -223,11 +334,17 @@ export default function Auth() {
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pl-9 sm:pl-10 h-10 sm:h-11 text-sm sm:text-base"
-                    minLength={6}
-                    required
+                    className={`pl-9 sm:pl-10 h-10 sm:h-11 text-sm sm:text-base ${fieldErrors.password ? 'border-destructive' : ''}`}
                   />
                 </div>
+                {fieldErrors.password && (
+                  <p className="text-xs text-destructive mt-1">{fieldErrors.password}</p>
+                )}
+                {!isLogin && (
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Must be at least 6 characters
+                  </p>
+                )}
               </div>
 
               <Button
@@ -254,6 +371,7 @@ export default function Auth() {
                   onClick={() => {
                     setIsLogin(!isLogin);
                     setError('');
+                    setFieldErrors({});
                   }}
                   className="ml-1 text-primary font-medium hover:underline"
                 >
