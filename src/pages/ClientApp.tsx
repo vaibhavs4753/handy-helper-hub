@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, MapPin, FileText, Loader2, ChevronRight, History, User, LogOut, Zap, Wrench, Droplets, Clock, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, MapPin, FileText, Loader2, ChevronRight, History, User, LogOut, Zap, Wrench, Droplets, Clock, CheckCircle2, CreditCard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -8,11 +8,12 @@ import { Label } from '@/components/ui/label';
 import { ServiceTypeCard, ServiceType } from '@/components/ServiceTypeCard';
 import { WaitingForTechnician } from '@/components/WaitingForTechnician';
 import { ServiceMap } from '@/components/ServiceMap';
+import { PaymentModal } from '@/components/PaymentModal';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 
-type AppView = 'home' | 'select-service' | 'details' | 'waiting' | 'connected' | 'history';
+type AppView = 'home' | 'select-service' | 'details' | 'payment' | 'waiting' | 'connected' | 'history';
 
 interface TechnicianInfo {
   id: string;
@@ -56,6 +57,8 @@ export default function ClientApp() {
   const [activeRequests, setActiveRequests] = useState<ServiceRequest[]>([]);
   const [pastRequests, setPastRequests] = useState<ServiceRequest[]>([]);
   const [currentRequestId, setCurrentRequestId] = useState<string | null>(null);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [estimatedCost, setEstimatedCost] = useState(50); // Base service fee
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -204,8 +207,8 @@ export default function ClientApp() {
     setView('details');
   };
 
-  const handleSubmitRequest = async () => {
-    if (!address || !profile) {
+  const handleProceedToPayment = () => {
+    if (!address) {
       toast({
         title: 'Missing Address',
         description: 'Please enter your address',
@@ -213,24 +216,37 @@ export default function ClientApp() {
       });
       return;
     }
+    // Set estimated cost based on service type
+    const baseCosts = { electrical: 60, mechanical: 55, plumbing: 50 };
+    setEstimatedCost(baseCosts[selectedService!] || 50);
+    setShowPaymentModal(true);
+  };
 
+  const handlePaymentSuccess = async () => {
+    setShowPaymentModal(false);
     setLoading(true);
 
     try {
       const { data, error } = await supabase.from('service_requests').insert({
-        client_id: profile.id,
+        client_id: profile!.id,
         service_type: selectedService,
         description: description || `${selectedService} service request`,
         address: address,
         latitude: clientLocation.lat,
         longitude: clientLocation.lng,
         status: 'pending',
+        payment_status: 'paid',
+        estimated_cost: estimatedCost,
       }).select().single();
 
       if (error) throw error;
 
       setCurrentRequestId(data.id);
       setView('waiting');
+      toast({
+        title: 'Payment Successful!',
+        description: 'Looking for nearby technicians...',
+      });
     } catch (error) {
       console.error('Error creating request:', error);
       toast({
@@ -241,6 +257,10 @@ export default function ClientApp() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSubmitRequest = () => {
+    handleProceedToPayment();
   };
 
   const handleTechnicianAccepted = (technician: TechnicianInfo) => {
@@ -599,12 +619,12 @@ export default function ClientApp() {
               {loading ? (
                 <>
                   <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                  Submitting Request...
+                  Processing...
                 </>
               ) : (
                 <>
-                  Find Technician
-                  <ChevronRight className="w-5 h-5 ml-2" />
+                  <CreditCard className="w-5 h-5 mr-2" />
+                  Continue to Payment
                 </>
               )}
             </Button>
@@ -659,6 +679,15 @@ export default function ClientApp() {
           )}
         </main>
       )}
+
+      {/* Payment Modal */}
+      <PaymentModal
+        isOpen={showPaymentModal}
+        onClose={() => setShowPaymentModal(false)}
+        onSuccess={handlePaymentSuccess}
+        amount={estimatedCost}
+        serviceType={selectedService || ''}
+      />
     </div>
   );
 }
