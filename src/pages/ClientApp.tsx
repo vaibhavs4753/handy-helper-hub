@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { ServiceTypeCard, ServiceType } from '@/components/ServiceTypeCard';
 import { WaitingForTechnician } from '@/components/WaitingForTechnician';
-import { ServiceMap } from '@/components/ServiceMap';
+import { LiveTrackingMap } from '@/components/LiveTrackingMap';
 import { PaymentModal } from '@/components/PaymentModal';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -17,6 +17,7 @@ type AppView = 'home' | 'select-service' | 'details' | 'payment' | 'waiting' | '
 
 interface TechnicianInfo {
   id: string;
+  profileId: string; // Added for realtime tracking
   name: string;
   phone: string;
   rating: number;
@@ -180,6 +181,7 @@ export default function ClientApp() {
       const profileData = Array.isArray(techProfile.profile) ? techProfile.profile[0] : techProfile.profile;
       setConnectedTechnician({
         id: techProfile.id,
+        profileId: technicianProfileId,
         name: profileData?.full_name || 'Technician',
         phone: profileData?.phone || '',
         rating: techProfile.rating || 4.8,
@@ -330,20 +332,20 @@ export default function ClientApp() {
     );
   }
 
-  // Connected View with Map
+  // Connected View with Live Tracking Map
   if (view === 'connected' && connectedTechnician) {
     return (
       <div className="h-screen flex flex-col">
-        <ServiceMap
+        <LiveTrackingMap
           clientLocation={clientLocation}
-          technicianLocation={{
+          initialTechnicianLocation={{
             lat: connectedTechnician.latitude,
             lng: connectedTechnician.longitude
           }}
+          technicianProfileId={connectedTechnician.profileId}
           technicianName={connectedTechnician.name}
           technicianPhone={connectedTechnician.phone}
           technicianRating={connectedTechnician.rating}
-          eta={connectedTechnician.eta}
           onComplete={handleServiceComplete}
         />
       </div>
