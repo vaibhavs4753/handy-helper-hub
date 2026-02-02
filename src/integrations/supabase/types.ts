@@ -127,6 +127,7 @@ export type Database = {
           hourly_rate: number
           id: string
           is_available: boolean | null
+          last_location_update: string | null
           latitude: number | null
           longitude: number | null
           profile_id: string
@@ -142,6 +143,7 @@ export type Database = {
           hourly_rate?: number
           id?: string
           is_available?: boolean | null
+          last_location_update?: string | null
           latitude?: number | null
           longitude?: number | null
           profile_id: string
@@ -157,6 +159,7 @@ export type Database = {
           hourly_rate?: number
           id?: string
           is_available?: boolean | null
+          last_location_update?: string | null
           latitude?: number | null
           longitude?: number | null
           profile_id?: string

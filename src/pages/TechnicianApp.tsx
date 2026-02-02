@@ -6,8 +6,7 @@ import { Switch } from '@/components/ui/switch';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
-import { ServiceMap } from '@/components/ServiceMap';
-
+import { LiveTrackingMap } from '@/components/LiveTrackingMap';
 interface ServiceRequest {
   id: string;
   service_type: 'electrical' | 'mechanical' | 'plumbing';
@@ -322,17 +321,17 @@ export default function TechnicianApp() {
     );
   }
 
-  // Active Job View with Map
-  if (activeJob) {
+  // Active Job View with Live Tracking Map
+  if (activeJob && profile) {
     return (
       <div className="h-screen flex flex-col">
-        <ServiceMap
+        <LiveTrackingMap
           clientLocation={{ lat: activeJob.latitude, lng: activeJob.longitude }}
-          technicianLocation={technicianLocation}
-          technicianName={profile?.full_name || 'Technician'}
+          initialTechnicianLocation={technicianLocation}
+          technicianProfileId={profile.id}
+          technicianName={profile.full_name || 'Technician'}
           technicianPhone=""
           technicianRating={technicianProfile?.rating || 4.8}
-          eta={15}
           onComplete={completeJob}
           isTechnicianView={true}
           clientName={activeJob.client.full_name}
