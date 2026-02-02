@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Wrench, Mail, Lock, User, AlertCircle, Loader2, CheckCircle2, MailCheck } from 'lucide-react';
+import { Wrench, Mail, Lock, User, AlertCircle, Loader2, CheckCircle2, MailCheck, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/hooks/use-toast';
 import { signInSchema, signUpSchema } from '@/lib/validations';
-
+import { supabase } from '@/integrations/supabase/client';
 export default function Auth() {
   const [searchParams] = useSearchParams();
   const roleFromUrl = searchParams.get('role');
@@ -23,6 +23,8 @@ export default function Auth() {
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [showVerification, setShowVerification] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
   
   const { user, signIn, signUp } = useAuth();
   const navigate = useNavigate();
@@ -50,6 +52,51 @@ export default function Auth() {
       setIsLogin(false);
     }
   }, [roleFromUrl]);
+
+  // Cooldown timer for resend button
+  useEffect(() => {
+    if (resendCooldown > 0) {
+      const timer = setTimeout(() => setResendCooldown(resendCooldown - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [resendCooldown]);
+
+  const handleResendVerification = async () => {
+    if (resendCooldown > 0 || !email) return;
+    
+    setResendLoading(true);
+    try {
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`,
+        },
+      });
+      
+      if (error) {
+        toast({
+          title: "Failed to resend",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        setResendCooldown(60); // 60 second cooldown
+        toast({
+          title: "Email sent!",
+          description: "Check your inbox for the verification link.",
+        });
+      }
+    } catch (err) {
+      toast({
+        title: "Error",
+        description: "Failed to resend verification email.",
+        variant: "destructive",
+      });
+    } finally {
+      setResendLoading(false);
+    }
+  };
 
   const validateForm = () => {
     setFieldErrors({});
@@ -199,6 +246,30 @@ export default function Auth() {
               
               <Button
                 variant="outline"
+                className="w-full mb-3"
+                onClick={handleResendVerification}
+                disabled={resendLoading || resendCooldown > 0}
+              >
+                {resendLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Sending...
+                  </>
+                ) : resendCooldown > 0 ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    Resend in {resendCooldown}s
+                  </>
+                ) : (
+                  <>
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    Resend Verification Email
+                  </>
+                )}
+              </Button>
+              
+              <Button
+                variant="ghost"
                 className="w-full"
                 onClick={() => {
                   setShowVerification(false);
@@ -210,7 +281,7 @@ export default function Auth() {
               </Button>
               
               <p className="text-xs text-muted-foreground mt-4">
-                Didn't receive the email? Check your spam folder or try signing up again.
+                Didn't receive the email? Check your spam folder or click resend above.
               </p>
             </div>
           </div>
