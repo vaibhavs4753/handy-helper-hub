@@ -34,8 +34,6 @@ export default function Auth() {
       // Redirect based on intended role from URL
       if (roleFromUrl === 'client') {
         navigate('/client');
-      } else if (roleFromUrl === 'technician') {
-        navigate('/technician');
       } else {
         navigate('/dashboard');
       }
@@ -158,8 +156,6 @@ export default function Auth() {
           // Navigate based on role from URL or default to dashboard
           if (roleFromUrl === 'client') {
             navigate('/client');
-          } else if (roleFromUrl === 'technician') {
-            navigate('/technician');
           } else {
             navigate('/dashboard');
           }
