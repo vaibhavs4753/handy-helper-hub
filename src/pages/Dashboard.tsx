@@ -87,8 +87,6 @@ export default function Dashboard() {
 
       if (profileData.user_type === 'client') {
         query = query.eq('client_id', profileData.id);
-      } else {
-        query = query.or(`technician_id.eq.${profileData.id},status.eq.pending`);
       }
 
       const { data, error } = await query;
@@ -166,24 +164,19 @@ export default function Dashboard() {
             Hello, {profile?.full_name?.split(' ')[0] || 'there'}! 👋
           </h1>
           <p className="text-sm sm:text-base text-muted-foreground">
-            {profile?.user_type === 'technician' 
-              ? 'Check for new service requests nearby'
-              : 'Need a repair? Book a technician now'}
+            Need a repair? Book a technician now
           </p>
         </div>
 
-        {/* Quick Actions */}
-        {profile?.user_type === 'client' && (
-          <div className="mb-6 sm:mb-8">
-            <Button
-              onClick={() => navigate('/request')}
-              className="w-full py-5 sm:py-6 text-base sm:text-lg gradient-accent text-accent-foreground shadow-accent-glow"
-            >
-              <Plus className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-              New Service Request
-            </Button>
-          </div>
-        )}
+        <div className="mb-6 sm:mb-8">
+          <Button
+            onClick={() => navigate('/request')}
+            className="w-full py-5 sm:py-6 text-base sm:text-lg gradient-accent text-accent-foreground shadow-accent-glow"
+          >
+            <Plus className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+            New Service Request
+          </Button>
+        </div>
 
         {/* Active Requests */}
         <section className="mb-6 sm:mb-8">
@@ -208,8 +201,7 @@ export default function Dashboard() {
                   technicianName={request.technician?.full_name}
                   address={request.address}
                   estimatedArrival={request.status === 'accepted' ? '15-20 mins' : undefined}
-                  onCancel={() => handleCancelRequest(request.id)}
-                  isTechnician={profile?.user_type === 'technician'}
+                  isTechnician={false}
                 />
               ))}
             </div>
@@ -220,51 +212,44 @@ export default function Dashboard() {
               </div>
               <h3 className="font-medium text-foreground mb-1 text-sm sm:text-base">No Active Requests</h3>
               <p className="text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4 px-4">
-                {profile?.user_type === 'technician'
-                  ? 'New requests will appear here'
-                  : 'Create a new request to get started'}
+                Create a new request to get started
               </p>
-              {profile?.user_type === 'client' && (
-                <Button onClick={() => navigate('/request')} className="gradient-primary text-primary-foreground text-sm">
-                  <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-2" />
-                  New Request
-                </Button>
-              )}
+              <Button onClick={() => navigate('/request')} className="gradient-primary text-primary-foreground text-sm">
+                <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-2" />
+                New Request
+              </Button>
             </div>
           )}
         </section>
 
-        {/* Quick Services for Clients */}
-        {profile?.user_type === 'client' && (
-          <section className="pb-4 sm:pb-0">
-            <h2 className="text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4">Quick Services</h2>
-            <div className="grid grid-cols-3 gap-2 sm:gap-3">
-              {(['electrical', 'mechanical', 'plumbing'] as const).map((service) => {
-                const Icon = serviceIcons[service];
-                return (
-                  <button
-                    key={service}
-                    onClick={() => navigate(`/request?service=${service}`)}
-                    className="p-3 sm:p-4 rounded-lg sm:rounded-xl bg-card border border-border hover:border-primary/50 transition-all text-center group touch-target"
-                  >
-                    <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl mx-auto mb-1.5 sm:mb-2 flex items-center justify-center transition-transform group-hover:scale-110 ${
-                      service === 'electrical' ? 'bg-electrical/10' :
-                      service === 'mechanical' ? 'bg-mechanical/10' :
-                      'bg-plumbing/10'
-                    }`}>
-                      <Icon className={`w-5 h-5 sm:w-6 sm:h-6 ${
-                        service === 'electrical' ? 'text-electrical' :
-                        service === 'mechanical' ? 'text-mechanical' :
-                        'text-plumbing'
-                      }`} />
-                    </div>
-                    <span className="text-xs sm:text-sm font-medium text-foreground capitalize">{service}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </section>
-        )}
+        <section className="pb-4 sm:pb-0">
+          <h2 className="text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4">Quick Services</h2>
+          <div className="grid grid-cols-3 gap-2 sm:gap-3">
+            {(['electrical', 'mechanical', 'plumbing'] as const).map((service) => {
+              const Icon = serviceIcons[service];
+              return (
+                <button
+                  key={service}
+                  onClick={() => navigate(`/request?service=${service}`)}
+                  className="p-3 sm:p-4 rounded-lg sm:rounded-xl bg-card border border-border hover:border-primary/50 transition-all text-center group touch-target"
+                >
+                  <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl mx-auto mb-1.5 sm:mb-2 flex items-center justify-center transition-transform group-hover:scale-110 ${
+                    service === 'electrical' ? 'bg-electrical/10' :
+                    service === 'mechanical' ? 'bg-mechanical/10' :
+                    'bg-plumbing/10'
+                  }`}>
+                    <Icon className={`w-5 h-5 sm:w-6 sm:h-6 ${
+                      service === 'electrical' ? 'text-electrical' :
+                      service === 'mechanical' ? 'text-mechanical' :
+                      'text-plumbing'
+                    }`} />
+                  </div>
+                  <span className="text-xs sm:text-sm font-medium text-foreground capitalize">{service}</span>
+                </button>
+              );
+            })}
+          </div>
+        </section>
       </main>
     </div>
   );

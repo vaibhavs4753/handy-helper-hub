@@ -107,7 +107,13 @@ export default function ClientApp() {
     if (data) {
       // If user is a technician, redirect them
       if (data.user_type === 'technician') {
-        navigate('/technician');
+        toast({
+          title: 'Wrong App',
+          description: 'Please use the Technician app to manage jobs.',
+          variant: 'destructive',
+        });
+        await signOut();
+        navigate('/');
         return;
       }
       setProfile({ id: data.id, full_name: data.full_name });
